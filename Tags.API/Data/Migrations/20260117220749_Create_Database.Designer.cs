@@ -12,7 +12,7 @@ using Tags.API.Data;
 namespace Tags.API.Data.Migrations
 {
     [DbContext(typeof(TagsDbContext))]
-    [Migration("20260112200327_Create_Database")]
+    [Migration("20260117220749_Create_Database")]
     partial class Create_Database
     {
         /// <inheritdoc />
@@ -24,6 +24,19 @@ namespace Tags.API.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Tags.API.Data.Note", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Notes");
+                });
 
             modelBuilder.Entity("Tags.API.Data.Tag", b =>
                 {
@@ -44,12 +57,7 @@ namespace Tags.API.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<Guid>("NoteId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("NoteId");
 
                     b.ToTable("Tags");
                 });

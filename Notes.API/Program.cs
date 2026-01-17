@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Notes.API.Data;
+using Notes.API.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,9 +10,16 @@ builder.Services.AddDbContext<NotesDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("notesdb")));
 builder.EnrichNpgsqlDbContext<NotesDbContext>();
 
+builder.Services.AddScoped<INoteEventPublisher, NoOpNoteEventPublisher>();
+builder.Services.AddSingleton<INoteEventPublisher, KafkaNoteEventPublisher>();
+
 builder.Services.AddOpenApi();
 
+builder.Services.AddControllers();
+
 var app = builder.Build();
+
+app.MapControllers();
 
 app.MapDefaultEndpoints();
 
